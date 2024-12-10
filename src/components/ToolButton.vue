@@ -1,16 +1,12 @@
 <script setup>
-    import { ref } from 'vue';
     const props = defineProps({
-        txt: String,
-        id: Number
+        txt: String
     })
 
-    const emit = defineEmits(['tool'])
+    const emit = defineEmits(['click'])
 </script>
 <template>
-    <button @click="emit('tool', props.id)" class="border-none w-32 h-32 bg-background-800 text-text-200 relative rounded-md flex justify-center">
-        <p>{{ txt }}</p>
+    <button @click="emit('click', true)" class="border-none p-5 bg-primary-600 hover:bg-primary-500 text-text-100 rounded-md">
+        {{ txt }}
     </button>
 </template>
-<style>
-</style>
