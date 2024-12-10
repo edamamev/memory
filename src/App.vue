@@ -38,7 +38,7 @@
 <template>
   <div class="">
     <Landing v-if="isLandingVisible" :buttons="buttons" @tool="(msg) => UpdateCurrentTool(msg)"/>
-    <MemToolNumbers v-if="isNumbersVisible" />
+    <MemToolNumbers v-if="isNumbersVisible" @tool="(msg) => UpdateCurrentTool(msg)"/>
   </div>
 </template>
 <style>
