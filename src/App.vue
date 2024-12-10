@@ -1,19 +1,44 @@
-<script>
+<script setup>
+  import Landing from './components/Landing.vue';
+  import MemToolNumbers from './components/MemToolNumbers.vue'
+  import { ref, watch } from 'vue';
+  const buttons = [
+    [1, "Numbers"],
+  ]
+  const isLandingVisible = ref(true)
+  const isNumbersVisible = ref(false)
+
+  let currentTool = 0
+
+  function UpdateCurrentTool(newTool){
+    console.log(`newTool: ${newTool}`)
+    console.log(`Before: visL: ${isLandingVisible}, visN: ${isNumbersVisible}, cT: ${currentTool}`)
+    currentTool = newTool
+    console.log(`Before: visL: ${isLandingVisible}, visN: ${isNumbersVisible}, cT: ${currentTool}`)
+    switch (newTool){
+      case 1:
+        isNumbersVisible.value = true;
+        isLandingVisible.value = false;
+        break;
+      case 0:
+        isLandingVisible.value = true;
+        isNumbersVisible.value = false;
+        break;
+      default:
+        isLandingVisible.value = true;
+        isNumbersVisible.value = false;
+        break;
+    }
+    console.log(`Before: visL: ${isLandingVisible}, visN: ${isNumbersVisible}, cT: ${currentTool}`)
+  }
+
 
 </script>
 
 <template>
   <div class="">
-    <div class="container min-h-screen min-w-full flex justify-center items-center bg-primary-800">
-      <h1 class="w text-text-200">Edme's Memory Tools</h1>
-    </div>
-    <div class="container min-h-screen bg-background-300 min-w-full">
-      <div class="ml-10">
-        <h1>Gonna be some stuff</h1>
-        <p>It's gonna be nerdy</p>
-        <p>Test?</p>
-      </div>
-    </div>
+    <Landing v-if="isLandingVisible" :buttons="buttons" @tool="(msg) => UpdateCurrentTool(msg)"/>
+    <MemToolNumbers v-if="isNumbersVisible" />
   </div>
 </template>
 <style>
