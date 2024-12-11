@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from 'vue'
+    import { ref, useTemplateRef, onMounted, onUnmounted } from 'vue'
     import Nav from './Nav.vue'
     import ToolDisplayText from './ToolDisplayText.vue';
     import ToolTitle from './ToolTitle.vue';
@@ -16,6 +16,12 @@
     const displayNumber = ref("295730")
     const buttonText = ref("Ready?")
 
+    const settings = useTemplateRef('settingsRef')
+    const maxBound = ref(0)
+    const minBound = ref(0)
+    const roundCount = ref(0)
+    const multiEncode = ref(false)
+
     function DetermineButtonFunction(){
         if (inSettings.value){
             FromSettingsToEncode()
@@ -31,9 +37,17 @@
     }
 
     function FromSettingsToEncode(){
-        inSettings.value = false
-        inEncode.value = true
-        buttonText.value = "Encoded"
+        // Get Settings Variables -> Local Variables
+        settings.value.emitSettings()
+        if (ValidSettingsConfig()){
+            inSettings.value = false
+            inEncode.value = true
+            buttonText.value = "Encoded"
+            //console.log(`minBound: ${minBound.value}, maxBound: ${maxBound.value}, roundCount: ${roundCount.value}, multiEncode: ${multiEncode.value}`)
+        } else {
+            // Invalid Settings~!
+            console.log(`Error?`)
+        }
     }
 
     function FromEncodeToDecode(){
@@ -54,6 +68,23 @@
         buttonText.value = "Ready?"
     }
 
+    function GenerateRandomNumber(boundMin, boundMax){
+        return Math.floor(Math.random() * (boundMax++ - boundMin) ) + boundMin;
+    }
+
+    function ValidSettingsConfig(){
+        // Check Max v Min Bounds
+        if (minBound.value >= maxBound.value || minBound.value < 0 || maxBound.value < 0 || minBound.value > 99 || maxBound.value > 99){
+            return false
+        }
+        return true
+    }
+
+    const HandleLowerBound = ((msg) => minBound.value = msg)
+    const HandleUpperBound = ((msg) => maxBound.value = msg)
+    const HandleQuantRound = ((msg) => roundCount.value = msg)
+    const HandleMulti = ((msg) => multiEncode.value = msg)
+
 </script>
 <template>
     <div class="">
@@ -63,7 +94,7 @@
             <!--Container?-->
             <div class=" container flex flex-col bg-secondary-800 justify-center items-center">
                 <ToolTitle v-if="inSettings" txt="Number Rapscallion Training"/>
-                <ToolSettingsNumber v-if="inSettings" />
+                <ToolSettingsNumber v-if="inSettings" ref="settingsRef" @upperBound="HandleUpperBound" @lowerBound="HandleLowerBound" @quantRound="HandleQuantRound" @multi="HandleMulti"/>
                 <ToolDisplayText v-if="inEncode" :txt="displayNumber"/>
                 <ToolInput v-if="inDecode" />
                 <ToolButton :txt="buttonText" @click="DetermineButtonFunction()"/>
@@ -72,4 +103,4 @@
     </div>
 </template>
 <style>
-</style>the
+</style>
